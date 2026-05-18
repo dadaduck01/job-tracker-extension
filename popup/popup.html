@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>求职投递追踪</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup-container">
+
+    <!-- State 1: Loading -->
+    <div id="state-loading" class="state">
+      <div class="loading-spinner"></div>
+      <p class="loading-text">🔍 正在分析页面…</p>
+      <p class="loading-sub">AI 正在提取投递信息</p>
+    </div>
+
+    <!-- State 2: Form -->
+    <div id="state-form" class="state hidden">
+      <h2 class="form-title">📝 投递记录</h2>
+
+      <form id="job-form">
+        <div class="form-row">
+          <label for="company">公司</label>
+          <input type="text" id="company" placeholder="公司名称" required>
+        </div>
+
+        <div class="form-row">
+          <label for="position">岗位</label>
+          <input type="text" id="position" placeholder="岗位名称" required>
+        </div>
+
+        <div class="form-row">
+          <label for="status">状态</label>
+          <div class="status-input-group">
+            <select id="status-select">
+              <option value="">-- 请选择 --</option>
+              <option value="简历初筛">简历初筛</option>
+              <option value="部门评估">部门评估</option>
+              <option value="笔试中">笔试中</option>
+              <option value="面试中">面试中</option>
+              <option value="挂">挂</option>
+              <option value="offer">offer</option>
+              <option value="__custom__">+ 自定义输入…</option>
+            </select>
+            <input type="text" id="status-custom" class="hidden"
+                   placeholder="输入自定义状态">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label for="location">地点</label>
+          <input type="text" id="location" placeholder="工作地点">
+        </div>
+
+        <div class="form-row">
+          <label for="link">链接</label>
+          <input type="url" id="link" placeholder="投递页面链接">
+        </div>
+
+        <div class="form-row">
+          <label for="apply-date">投递日期</label>
+          <input type="date" id="apply-date" required>
+        </div>
+
+        <div class="form-row">
+          <label for="intro">自我介绍</label>
+          <textarea id="intro" rows="2" placeholder="（初始为空）"></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="button" id="reanalyze-btn" class="btn-secondary">🔄 重新分析</button>
+          <button type="submit" id="save-btn" class="btn-primary">💾 保存到 SeaTable</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- State 3: No config -->
+    <div id="state-noconfig" class="state hidden">
+      <div class="empty-state">
+        <p class="empty-icon">⚙️</p>
+        <h3>尚未配置</h3>
+        <p>请先设置 DeepSeek 和 SeaTable 的 API Key</p>
+        <button id="open-settings-btn" class="btn-primary">打开设置</button>
+      </div>
+    </div>
+
+    <!-- State 4: Success -->
+    <div id="state-success" class="state hidden">
+      <div class="empty-state">
+        <p class="empty-icon">✅</p>
+        <h3>已保存到 SeaTable</h3>
+        <div id="saved-preview" class="saved-preview"></div>
+        <button id="new-record-btn" class="btn-primary">再记一条</button>
+        <button id="close-btn" class="btn-secondary">关闭</button>
+      </div>
+    </div>
+
+    <!-- State 5: Error -->
+    <div id="state-error" class="state hidden">
+      <div class="empty-state">
+        <p class="empty-icon">❌</p>
+        <h3>出错了</h3>
+        <p id="error-msg" class="error-text"></p>
+        <button id="retry-btn" class="btn-primary">重试</button>
+        <button id="manual-btn" class="btn-secondary">手动填写</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="../lib/seatable.js" type="module"></script>
+  <script src="../lib/deepseek.js" type="module"></script>
+  <script src="popup.js" type="module"></script>
+</body>
+</html>
