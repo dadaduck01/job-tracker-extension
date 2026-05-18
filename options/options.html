@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>求职投递追踪 - 设置</title>
+  <link rel="stylesheet" href="options.css">
+</head>
+<body>
+  <div class="container">
+    <h1>⚙️ 设置</h1>
+    <p class="subtitle">配置 API Key 后即可使用插件</p>
+
+    <form id="settings-form">
+      <!-- DeepSeek Section -->
+      <fieldset>
+        <legend>🤖 DeepSeek AI</legend>
+        <div class="form-group">
+          <label for="deepseek-key">API Key</label>
+          <input type="password" id="deepseek-key" name="deepseekKey"
+                 placeholder="sk-xxxxxxxxxxxxxxxx"
+                 autocomplete="off">
+          <span class="hint">
+            获取地址：<a href="https://platform.deepseek.com/api_keys" target="_blank">platform.deepseek.com</a>
+          </span>
+        </div>
+      </fieldset>
+
+      <!-- SeaTable Section -->
+      <fieldset>
+        <legend>📊 SeaTable</legend>
+        <div class="form-group">
+          <label for="seatable-server">服务器地址</label>
+          <input type="url" id="seatable-server" name="seatableServer"
+                 placeholder="https://cloud.seatable.cn">
+        </div>
+        <div class="form-group">
+          <label for="seatable-token">API Token</label>
+          <input type="password" id="seatable-token" name="seatableToken"
+                 placeholder="从 SeaTable 表格 → 高级 → API Token 获取"
+                 autocomplete="off">
+          <span class="hint">
+            获取方式：打开表格 → 右上角 ⋮ → 高级 → API Token → 生成
+          </span>
+        </div>
+        <div class="form-group">
+          <label for="seatable-table">表名</label>
+          <input type="text" id="seatable-table" name="seatableTable"
+                 placeholder="投递记录">
+        </div>
+      </fieldset>
+
+      <div class="actions">
+        <button type="submit" id="save-btn">保存设置</button>
+        <span id="status-msg" class="status hidden"></span>
+      </div>
+    </form>
+  </div>
+
+  <script src="options.js" type="module"></script>
+</body>
+</html>
