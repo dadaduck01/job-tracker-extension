@@ -3,7 +3,7 @@
 一键将招聘网站的投递信息自动记录到 SeaTable 在线表格，AI 自动提取页面内容，告别手动整理。
 
 <p align="center">
-  <img src="icons/icon.svg" width="128" height="128" alt="icon">
+  <img src="icons/icon.png" width="128" height="128" alt="icon">
 </p>
 
 ## ✨ 功能
@@ -78,7 +78,7 @@ Chrome Extension (Manifest V3)
 │   ├── seatable.js # SeaTable REST API 封装 (api-gateway v2)
 │   └── deepseek.js # DeepSeek API 封装 (deepseek-v4-flash)
 └── icons/
-    └── icon.svg    # 插件图标
+    └── icon.png    # 插件图标
 ```
 
 **技术栈：** Vanilla JS · Chrome Manifest V3 · DeepSeek v4 Flash · SeaTable API v5.2+
