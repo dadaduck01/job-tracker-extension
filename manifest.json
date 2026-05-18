@@ -1,0 +1,26 @@
+{
+  "manifest_version": 3,
+  "name": "求职投递追踪",
+  "version": "1.0.0",
+  "description": "一键记录求职投递信息到 SeaTable，支持 AI 自动提取页面信息",
+  "permissions": ["storage", "activeTab", "scripting"],
+  "host_permissions": [
+    "https://api.deepseek.com/*",
+    "https://cloud.seatable.io/*",
+    "https://cloud.seatable.cn/*"
+  ],
+  "action": {
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "options_page": "options/options.html",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  }
+}
