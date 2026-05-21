@@ -38,7 +38,7 @@
 
 /* ── Base ── */
 body {
-  font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+  font-family: "PingFang SC", "Microsoft YaHei", "Hiragino Sans GB", "Noto Sans SC", system-ui, -apple-system, sans-serif;
   background: linear-gradient(135deg, var(--slate-50) 0%, #EFF6FF 50%, var(--slate-100) 100%);
   color: var(--slate-800);
   min-width: 420px;
