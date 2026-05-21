@@ -9,15 +9,37 @@
 <body>
   <div class="popup-container">
 
-    <!-- State 1: Loading -->
-    <div id="state-loading" class="state">
-      <div class="loading-spinner"></div>
-      <p class="loading-text">🔍 正在分析页面…</p>
-      <p class="loading-sub">AI 正在提取投递信息</p>
+    <!-- State: Home (two action buttons) -->
+    <div id="state-home" class="state hidden">
+      <h2 class="form-title">求职投递追踪</h2>
+      <p class="home-sub">选择你要执行的操作</p>
+
+      <div class="home-actions">
+        <button id="track-btn" class="home-btn home-btn-track">
+          <span class="home-btn-icon">📝</span>
+          <span class="home-btn-label">记录投递</span>
+          <span class="home-btn-desc">在投递状态页使用，提取公司、岗位、状态等信息</span>
+        </button>
+        <button id="analyze-btn" class="home-btn home-btn-analyze">
+          <span class="home-btn-icon">🔍</span>
+          <span class="home-btn-label">解读岗位 JD</span>
+          <span class="home-btn-desc">在职位描述页使用，AI 分析岗位内容和要求</span>
+        </button>
+      </div>
+
+      <button id="home-settings-btn" class="btn-text">⚙️ 设置</button>
     </div>
 
-    <!-- State 2: Form -->
+    <!-- State: Loading -->
+    <div id="state-loading" class="state hidden">
+      <div class="loading-spinner"></div>
+      <p id="loading-text" class="loading-text"></p>
+      <p id="loading-sub" class="loading-sub"></p>
+    </div>
+
+    <!-- State: Job Tracking Form -->
     <div id="state-form" class="state hidden">
+      <button type="button" id="form-back-btn" class="back-btn">← 返回</button>
       <h2 class="form-title">📝 投递记录</h2>
 
       <form id="job-form">
@@ -25,12 +47,10 @@
           <label for="company">公司</label>
           <input type="text" id="company" placeholder="公司名称" required>
         </div>
-
         <div class="form-row">
           <label for="position">岗位</label>
           <input type="text" id="position" placeholder="岗位名称" required>
         </div>
-
         <div class="form-row">
           <label for="status">状态</label>
           <div class="status-input-group">
@@ -48,90 +68,71 @@
                    placeholder="输入自定义状态">
           </div>
         </div>
-
         <div class="form-row">
           <label for="location">地点</label>
           <input type="text" id="location" placeholder="工作地点">
         </div>
-
         <div class="form-row">
           <label for="link">链接</label>
           <input type="url" id="link" placeholder="投递页面链接">
         </div>
-
         <div class="form-row">
           <label for="apply-date">投递日期</label>
           <input type="date" id="apply-date" required>
         </div>
-
         <div class="form-row">
           <label for="intro">自我介绍</label>
           <textarea id="intro" rows="2" placeholder="（初始为空）"></textarea>
         </div>
 
         <div class="form-actions">
-          <button type="button" id="reanalyze-btn" class="btn-secondary">🔄 重新分析</button>
+          <button type="button" id="reanalyze-btn" class="btn-secondary">🔄 重新提取</button>
           <button type="submit" id="save-btn" class="btn-primary">💾 保存到 SeaTable</button>
         </div>
       </form>
+    </div>
 
-      <!-- JD Analysis Section -->
-      <div id="jd-section" class="jd-section">
-        <button type="button" id="jd-toggle-btn" class="jd-toggle">
-          <span class="jd-toggle-icon">🔍</span>
-          <span class="jd-toggle-text">解读岗位 JD</span>
-          <span class="jd-toggle-arrow">▸</span>
-        </button>
-        <div id="jd-body" class="jd-body hidden">
-          <p class="jd-hint">让 AI 帮你分析这个岗位是做什么的、适合什么人、需要什么能力</p>
-          <button type="button" id="jd-analyze-btn" class="btn-primary jd-analyze-btn">🤖 AI 分析岗位</button>
-          <div id="jd-result" class="jd-result hidden">
-            <div id="jd-overview" class="jd-card"></div>
-            <div id="jd-suitable" class="jd-card"></div>
-            <div id="jd-skills" class="jd-card"></div>
-            <button type="button" id="jd-fill-intro-btn" class="btn-secondary jd-fill-btn">📝 填入自我介绍</button>
-          </div>
-          <div id="jd-loading" class="jd-loading hidden">
-            <div class="loading-spinner jd-spinner"></div>
-            <p>正在分析岗位…</p>
-          </div>
-          <div id="jd-error" class="jd-error hidden">
-            <p id="jd-error-msg"></p>
-            <button type="button" id="jd-retry-btn" class="btn-secondary">重试</button>
-          </div>
-        </div>
+    <!-- State: JD Analysis Result -->
+    <div id="state-jd" class="state hidden">
+      <button type="button" id="jd-back-btn" class="back-btn">← 返回</button>
+      <h2 class="form-title">🔍 岗位解读</h2>
+
+      <div id="jd-result">
+        <div id="jd-overview" class="jd-card"></div>
+        <div id="jd-suitable" class="jd-card"></div>
+        <div id="jd-skills" class="jd-card"></div>
       </div>
     </div>
 
-    <!-- State 3: No config -->
-    <div id="state-noconfig" class="state hidden">
-      <div class="empty-state">
-        <p class="empty-icon">⚙️</p>
-        <h3>尚未配置</h3>
-        <p>请先设置 DeepSeek 和 SeaTable 的 API Key</p>
-        <button id="open-settings-btn" class="btn-primary">打开设置</button>
-      </div>
-    </div>
-
-    <!-- State 4: Success -->
+    <!-- State: Success -->
     <div id="state-success" class="state hidden">
       <div class="empty-state">
         <p class="empty-icon">✅</p>
         <h3>已保存到 SeaTable</h3>
         <div id="saved-preview" class="saved-preview"></div>
         <button id="new-record-btn" class="btn-primary">再记一条</button>
-        <button id="close-btn" class="btn-secondary">关闭</button>
+        <button id="back-home-btn" class="btn-secondary">返回首页</button>
       </div>
     </div>
 
-    <!-- State 5: Error -->
+    <!-- State: Error -->
     <div id="state-error" class="state hidden">
       <div class="empty-state">
         <p class="empty-icon">❌</p>
         <h3>出错了</h3>
         <p id="error-msg" class="error-text"></p>
         <button id="retry-btn" class="btn-primary">重试</button>
-        <button id="manual-btn" class="btn-secondary">手动填写</button>
+        <button id="error-back-btn" class="btn-secondary">返回首页</button>
+      </div>
+    </div>
+
+    <!-- State: No Config -->
+    <div id="state-noconfig" class="state hidden">
+      <div class="empty-state">
+        <p class="empty-icon">⚙️</p>
+        <h3>尚未配置</h3>
+        <p>请先设置 DeepSeek 和 SeaTable 的 API Key</p>
+        <button id="open-settings-btn" class="btn-primary">打开设置</button>
       </div>
     </div>
 
