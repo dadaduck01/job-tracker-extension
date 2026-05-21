@@ -1,7 +1,7 @@
 // Popup logic - page extraction, LLM call, form handling, SeaTable save
 
 import { SeaTableClient } from '../lib/seatable.js';
-import { extractJobInfo } from '../lib/deepseek.js';
+import { extractJobInfo, analyzeJD } from '../lib/deepseek.js';
 
 // --- State ---
 const DEFAULT_SETTINGS = {
@@ -12,6 +12,9 @@ const DEFAULT_SETTINGS = {
 };
 
 const PRESET_STATUSES = ['简历初筛', '部门评估', '笔试中', '面试中', '挂', 'offer'];
+
+// Cached page text for JD analysis reuse
+let cachedPageText = '';
 
 // --- DOM Elements ---
 function $(id) { return document.getElementById(id); }
@@ -151,6 +154,8 @@ async function main() {
       pageText = '';
     }
 
+    cachedPageText = pageText;
+
     let extractedData;
     try {
       extractedData = await extractJobInfo(pageText, settings.deepseekKey);
@@ -261,6 +266,101 @@ $('manual-btn').addEventListener('click', async () => {
   } catch (err) {
     showError(err.message);
   }
+});
+
+// --- JD Analysis Handlers ---
+
+// Toggle expand/collapse
+$('jd-toggle-btn').addEventListener('click', () => {
+  const section = document.querySelector('.jd-section');
+  const body = $('jd-body');
+  const isOpen = !body.classList.contains('hidden');
+  if (isOpen) {
+    body.classList.add('hidden');
+    section.classList.remove('open');
+  } else {
+    body.classList.remove('hidden');
+    section.classList.add('open');
+  }
+});
+
+// Analyze JD
+$('jd-analyze-btn').addEventListener('click', async () => {
+  const analyzeBtn = $('jd-analyze-btn');
+  const resultDiv = $('jd-result');
+  const loadingDiv = $('jd-loading');
+  const errorDiv = $('jd-error');
+
+  // Hide previous results
+  resultDiv.classList.add('hidden');
+  errorDiv.classList.add('hidden');
+  analyzeBtn.classList.add('hidden');
+  loadingDiv.classList.remove('hidden');
+
+  try {
+    const settings = await chrome.storage.sync.get(DEFAULT_SETTINGS);
+    const analysis = await analyzeJD(cachedPageText, settings.deepseekKey);
+
+    loadingDiv.classList.add('hidden');
+
+    if (!analysis.overview && !analysis.suitable && !analysis.skills) {
+      showJdError('未能从页面中提取到岗位描述内容');
+      return;
+    }
+
+    $('jd-overview').textContent = analysis.overview || '未能提取';
+    $('jd-suitable').textContent = analysis.suitable || '未能提取';
+    $('jd-skills').textContent = analysis.skills || '未能提取';
+    resultDiv.classList.remove('hidden');
+
+  } catch (err) {
+    loadingDiv.classList.add('hidden');
+    showJdError(err.message);
+  }
+});
+
+function showJdError(msg) {
+  $('jd-error-msg').textContent = msg;
+  $('jd-error').classList.remove('hidden');
+}
+
+// Retry JD analysis
+$('jd-retry-btn').addEventListener('click', () => {
+  $('jd-error').classList.add('hidden');
+  $('jd-analyze-btn').classList.remove('hidden');
+});
+
+// Fill intro with JD analysis
+$('jd-fill-intro-btn').addEventListener('click', () => {
+  const overview = $('jd-overview').textContent;
+  const suitable = $('jd-suitable').textContent;
+  const skills = $('jd-skills').textContent;
+
+  const text = [
+    `【岗位概述】${overview}`,
+    `【适合人群】${suitable}`,
+    `【所需能力】${skills}`
+  ].filter(t => !t.includes('未能提取')).join('\n\n');
+
+  if (text) {
+    $('intro').value = text;
+    // Scroll to intro field
+    $('intro').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+});
+
+// Reset JD section on reanalyze
+const origReanalyze = $('reanalyze-btn').onclick;
+$('reanalyze-btn').addEventListener('click', () => {
+  // Reset JD section
+  const section = document.querySelector('.jd-section');
+  const body = $('jd-body');
+  body.classList.add('hidden');
+  section.classList.remove('open');
+  $('jd-analyze-btn').classList.remove('hidden');
+  $('jd-result').classList.add('hidden');
+  $('jd-loading').classList.add('hidden');
+  $('jd-error').classList.add('hidden');
 });
 
 // --- Init ---

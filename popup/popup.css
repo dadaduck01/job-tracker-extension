@@ -29,6 +29,14 @@
   --green-400: #4ADE80;
   --green-600: #16A34A;
   --green-800: #166534;
+  --indigo-50: #EEF2FF;
+  --indigo-200: #C7D2FE;
+  --indigo-500: #6366F1;
+  --teal-500: #14B8A6;
+  --purple-500: #8B5CF6;
+  --blue-50: #EFF6FF;
+  --slate-150: #E8ECF1;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
   --shadow-md: 0 4px 12px rgba(15, 23, 42, 0.06);
   --shadow-lg: 0 10px 30px rgba(15, 23, 42, 0.08);
@@ -370,6 +378,133 @@ body {
   line-height: 1.7;
   color: var(--green-800);
   box-shadow: inset 0 1px 2px rgba(20, 184, 166, 0.05), var(--shadow-sm);
+}
+
+/* ══════════════════════════════════════
+   JD Analysis Section
+   ══════════════════════════════════════ */
+
+.jd-section {
+  margin-top: 14px;
+  border-top: 1px solid var(--slate-200);
+  padding-top: 12px;
+}
+
+/* Toggle header */
+.jd-toggle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 12px;
+  background: linear-gradient(135deg, var(--slate-50) 0%, var(--blue-50) 100%);
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--slate-700);
+  transition: all 0.2s var(--ease-out);
+}
+.jd-toggle:hover {
+  background: linear-gradient(135deg, var(--blue-50) 0%, var(--indigo-50) 100%);
+  border-color: var(--indigo-200);
+}
+.jd-toggle-icon { font-size: 15px; }
+.jd-toggle-text { flex: 1; text-align: left; }
+.jd-toggle-arrow {
+  font-size: 11px;
+  transition: transform 0.2s var(--ease-out);
+  color: var(--slate-400);
+}
+.jd-section.open .jd-toggle-arrow { transform: rotate(90deg); }
+
+/* Body */
+.jd-body {
+  margin-top: 10px;
+  padding: 0 2px;
+}
+
+.jd-hint {
+  font-size: 12px;
+  color: var(--slate-400);
+  margin-bottom: 10px;
+  line-height: 1.5;
+}
+
+.jd-analyze-btn {
+  width: 100%;
+}
+
+/* Loading */
+.jd-loading {
+  text-align: center;
+  padding: 16px 0;
+}
+.jd-spinner {
+  margin: 0 auto 8px;
+  width: 28px; height: 28px;
+  border-width: 2.5px;
+}
+.jd-loading p {
+  font-size: 12px;
+  color: var(--slate-400);
+}
+
+/* Result cards */
+.jd-result {
+  margin-top: 12px;
+}
+
+.jd-card {
+  background: var(--slate-50);
+  border: 1px solid var(--slate-150);
+  border-radius: var(--radius-md);
+  padding: 12px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  line-height: 1.65;
+  color: var(--slate-700);
+  transition: all 0.2s var(--ease-out);
+}
+.jd-card:hover {
+  background: #fff;
+  border-color: var(--indigo-200);
+  box-shadow: var(--shadow-sm);
+}
+
+.jd-card::before {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  letter-spacing: 0.02em;
+}
+
+#jd-overview::before {
+  content: "📋 岗位概述";
+  color: var(--indigo-500);
+}
+#jd-suitable::before {
+  content: "👤 适合人群";
+  color: var(--teal-500);
+}
+#jd-skills::before {
+  content: "🛠 所需能力";
+  color: var(--purple-500);
+}
+
+.jd-fill-btn {
+  width: 100%;
+  margin-top: 4px;
+}
+
+/* Error */
+.jd-error {
+  text-align: center;
+  padding: 12px 0;
+  font-size: 12px;
+  color: var(--red-500);
 }
 
 /* ── Hidden utility ── */
