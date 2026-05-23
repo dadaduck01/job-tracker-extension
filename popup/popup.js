@@ -85,13 +85,15 @@ async function runJDAnalysis() {
   currentMode = 'jd';
   showState('state-loading');
   $('loading-text').textContent = '🔍 正在分析岗位…';
-  $('loading-sub').textContent = 'AI 正在解读职位描述';
+  $('loading-sub').textContent = '正在从页面提取职位信息';
 
   try {
     const settings = await chrome.storage.sync.get(DEFAULT_SETTINGS);
     const { text } = await getPageText();
 
-    const analysis = await analyzeJD(text, settings.deepseekKey);
+    const analysis = await analyzeJD(text, settings.deepseekKey, (msg) => {
+      $('loading-sub').textContent = msg;
+    });
     $('jd-overview').textContent = analysis.overview || '未能提取';
     $('jd-suitable').textContent = analysis.suitable || '未能提取';
     $('jd-skills').textContent = analysis.skills || '未能提取';
