@@ -1,14 +1,15 @@
 // Popup logic — two independent modes: job tracking + JD analysis
 
 import { SeaTableClient } from '../lib/seatable.js';
-import { extractJobInfo, analyzeJD } from '../lib/deepseek.js';
+import { extractJobInfo, analyzeJD, generateAdvice, hasProfileContent } from '../lib/deepseek.js';
 
 // --- Config ---
 const DEFAULT_SETTINGS = {
   deepseekKey: '',
   seatableServer: 'https://cloud.seatable.cn',
   seatableToken: '',
-  seatableTable: '投递记录'
+  seatableTable: '投递记录',
+  userProfile: null
 };
 
 const PRESET_STATUSES = ['简历初筛', '部门评估', '笔试中', '面试中', '挂', 'offer'];
@@ -17,6 +18,9 @@ const ALL_STATES = ['state-home', 'state-loading', 'state-form', 'state-jd',
 
 // Track which mode is active (for retry)
 let currentMode = null; // 'track' | 'jd'
+
+// Store the last JD analysis result for advice generation
+let jdAnalysis = null;
 
 // --- Helpers ---
 function $(id) { return document.getElementById(id); }
@@ -91,12 +95,28 @@ async function runJDAnalysis() {
     const settings = await chrome.storage.sync.get(DEFAULT_SETTINGS);
     const { text } = await getPageText();
 
-    const analysis = await analyzeJD(text, settings.deepseekKey, (msg) => {
+    jdAnalysis = await analyzeJD(text, settings.deepseekKey, (msg) => {
       $('loading-sub').textContent = msg;
     });
-    $('jd-overview').textContent = analysis.overview || '未能提取';
-    $('jd-suitable').textContent = analysis.suitable || '未能提取';
-    $('jd-skills').textContent = analysis.skills || '未能提取';
+    $('jd-overview').textContent = jdAnalysis.overview || '未能提取';
+    $('jd-suitable').textContent = jdAnalysis.suitable || '未能提取';
+    $('jd-skills').textContent = jdAnalysis.skills || '未能提取';
+
+    // Reset advice section for fresh analysis
+    $('jd-advice').classList.add('hidden');
+    $('jd-advice').textContent = '';
+    $('advice-hint').classList.add('hidden');
+
+    // Show advice button only if user has filled profile
+    const profile = settings.userProfile;
+    if (!hasProfileContent(profile)) {
+      $('advice-btn').classList.add('hidden');
+      $('advice-hint').classList.remove('hidden');
+    } else {
+      $('advice-btn').classList.remove('hidden');
+      $('advice-btn').disabled = false;
+      $('advice-btn').textContent = '🔍 获取投递建议';
+    }
 
     showState('state-jd');
   } catch (err) {
@@ -109,6 +129,41 @@ async function runJDAnalysis() {
 function showError(msg) {
   $('error-msg').textContent = msg;
   showState('state-error');
+}
+
+// --- Advice Card Rendering ---
+
+function renderAdviceCard(a) {
+  if (!a) return '<p>未能生成建议。</p>';
+
+  const score = a.value_score;
+  const riskColor = a.dirty_work_risk === '高' || a.dirty_work_risk === '很高'
+    ? 'var(--red-600)' : '#D97706';
+
+  const has = (field) => a[field] && a[field] !== '未能提取';
+
+  return `
+    <div class="advice-header">
+      <span class="advice-score">
+        ${a.job_value_recommendation || '—'}
+        ${score != null ? `<span class="advice-score-num">${score}/100</span>` : ''}
+      </span>
+      ${a.dirty_work_risk ? `<span class="advice-risk" style="color:${riskColor}">⚠️ Dirty work 风险：${a.dirty_work_risk}</span>` : ''}
+    </div>
+    ${has('overall_judgement') ? `<div class="advice-block">${a.overall_judgement}</div>` : ''}
+    ${has('valuable_signals') ? `<div class="advice-block"><span class="advice-label">✅ 价值信号</span>${a.valuable_signals}</div>` : ''}
+    ${has('risk_signals') ? `<div class="advice-block"><span class="advice-label">⚠️ 风险信号</span>${a.risk_signals}</div>` : ''}
+    ${has('resume_value') ? `<div class="advice-block"><span class="advice-label">📝 简历价值</span>${a.resume_value}</div>` : ''}
+    ${has('learning_value') ? `<div class="advice-block"><span class="advice-label">📚 学习价值</span>${a.learning_value}</div>` : ''}
+    ${has('apply_priority_reason') ? `<div class="advice-block"><span class="advice-label">🎯 投递优先级</span>${a.apply_priority_reason}</div>` : ''}
+    ${a.questions_to_verify?.length ? `
+      <div class="advice-block">
+        <span class="advice-label">❓ 面试可追问</span>
+        <ul class="advice-list">${a.questions_to_verify.map(q => `<li>${q}</li>`).join('')}</ul>
+      </div>
+    ` : ''}
+    ${a.final_advice ? `<div class="advice-block advice-final">💡 ${a.final_advice}</div>` : ''}
+  `;
 }
 
 // === Form Helpers ===
@@ -184,6 +239,38 @@ async function updateStatusDropdown() {
 $('track-btn').addEventListener('click', () => runJobTracking());
 $('analyze-btn').addEventListener('click', () => runJDAnalysis());
 $('home-settings-btn').addEventListener('click', () => chrome.runtime.openOptionsPage());
+
+// JD — get personalized advice
+$('advice-btn').addEventListener('click', async () => {
+  const btn = $('advice-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ 生成中…';
+
+  try {
+    const settings = await chrome.storage.sync.get(DEFAULT_SETTINGS);
+    const profile = settings.userProfile || {};
+
+    if (!hasProfileContent(profile)) {
+      $('jd-advice').innerHTML = '<p>请先在设置中填写个人信息。</p>';
+      $('jd-advice').classList.remove('hidden');
+      btn.classList.add('hidden');
+      return;
+    }
+
+    const advice = await generateAdvice(jdAnalysis, profile, settings.deepseekKey, (msg) => {
+      btn.textContent = msg;
+    });
+
+    $('jd-advice').innerHTML = renderAdviceCard(advice);
+    $('jd-advice').classList.remove('hidden');
+    btn.classList.add('hidden');
+  } catch (err) {
+    $('jd-advice').innerHTML = `<p style="color:var(--red-600);">生成建议失败: ${err.message}</p>`;
+    $('jd-advice').classList.remove('hidden');
+    btn.disabled = false;
+    btn.textContent = '🔍 重试';
+  }
+});
 
 // Form — status dropdown
 $('status-select').addEventListener('change', () => {

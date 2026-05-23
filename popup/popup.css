@@ -64,8 +64,8 @@ body {
   line-height: 1.8;
   background: linear-gradient(180deg, var(--slate-50) 0%, var(--slate-100) 100%);
   color: var(--slate-800);
-  width: 520px;
-  min-height: 300px;
+  width: 100%;
+  min-height: 100vh;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -508,6 +508,131 @@ body {
 #jd-skills::before {
   content: "🛠 所需能力";
   color: var(--purple-500);
+}
+
+/* ── JD Advice Section ── */
+#jd-advice-section {
+  margin-top: 16px;
+}
+
+#jd-advice::before {
+  content: "💡 投递建议";
+  color: #D97706;
+}
+
+.advice-hint {
+  text-align: center;
+  font-size: 13px;
+  color: var(--slate-400);
+  padding: 12px;
+  margin: 0;
+}
+
+/* Advice Card Internals */
+.advice-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+.advice-score {
+  font-weight: 700;
+}
+
+.advice-score-num {
+  display: inline-block;
+  background: linear-gradient(135deg, #F59E0B, #D97706);
+  color: #fff;
+  font-size: 13px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  margin-left: 6px;
+  vertical-align: middle;
+}
+
+.advice-risk {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.advice-block {
+  margin-bottom: 12px;
+  line-height: 1.8;
+}
+
+.advice-block:last-child {
+  margin-bottom: 0;
+}
+
+.advice-label {
+  display: block;
+  font-size: 14px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.advice-list {
+  margin: 4px 0 0 18px;
+  padding: 0;
+  line-height: 1.8;
+}
+
+.advice-list li {
+  margin-bottom: 4px;
+}
+
+.advice-final {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--slate-200);
+  font-weight: 700;
+  color: #B45309;
+}
+
+.btn-advice {
+  display: block;
+  width: 100%;
+  padding: 11px 16px;
+  background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: 15px;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.3), 0 1px 2px rgba(217, 119, 6, 0.15);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-advice::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.btn-advice:hover {
+  background: linear-gradient(135deg, #D97706 0%, #B45309 100%);
+  box-shadow: 0 4px 14px rgba(217, 119, 6, 0.4), 0 1px 3px rgba(217, 119, 6, 0.2);
+  transform: translateY(-1px);
+}
+
+.btn-advice:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(217, 119, 6, 0.25);
+}
+
+.btn-advice:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
 }
 
 /* ── Hidden utility ── */

@@ -283,3 +283,77 @@ input:focus {
 }
 
 .hidden { display: none !important; }
+
+/* ── Textarea ── */
+textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--slate-200);
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  font-family: "SourceHanSerif", "Songti SC", "Noto Serif SC", "STSong", serif;
+  color: var(--slate-800);
+  background: #fff;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+  resize: vertical;
+  line-height: 1.75;
+}
+
+textarea::placeholder {
+  color: var(--slate-400);
+}
+
+textarea:focus {
+  outline: none;
+  border-color: var(--indigo);
+  box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1), var(--shadow-sm);
+}
+
+/* ── Profile Sections ── */
+.profile-section {
+  margin-bottom: 28px;
+}
+
+.profile-section:last-child {
+  margin-bottom: 0;
+}
+
+.profile-section-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--slate-600);
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* ── Profile Blocks (education / experience cards) ── */
+.profile-block {
+  background: #fff;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  margin-bottom: 12px;
+  box-shadow: var(--shadow-sm);
+}
+
+.profile-block:last-child {
+  margin-bottom: 0;
+}
+
+/* ── Inline Form Groups (school | major | period in one row) ── */
+.profile-inline {
+  display: flex;
+  gap: 12px;
+}
+
+.profile-inline .form-group {
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-inline .form-group:last-child {
+  flex: 0.6;
+}
