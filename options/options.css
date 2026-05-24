@@ -52,7 +52,7 @@ body {
   line-height: 1.75;
   background: linear-gradient(135deg, var(--slate-50) 0%, #EFF6FF 50%, var(--slate-100) 100%);
   color: var(--slate-800);
-  min-width: 420px;
+  min-width: 480px;
   min-height: 100vh;
   padding: 40px 20px;
   -webkit-font-smoothing: antialiased;
@@ -60,7 +60,7 @@ body {
 
 /* ── Container Card ── */
 .container {
-  max-width: 520px;
+  max-width: 640px;
   margin: 0 auto;
   background: #fff;
   border-radius: var(--radius-lg);
